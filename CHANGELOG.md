@@ -1,5 +1,10 @@
 # Changelog
 
+## [v2.0.0] - 2026-08-24
+
+Implemented: File sync with checksum verification
+
+
 ## [v1.1.0] - 2025
 
 ### Added
