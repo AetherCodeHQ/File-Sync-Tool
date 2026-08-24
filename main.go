@@ -1,11 +1,10 @@
-
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 func main() {
@@ -13,17 +12,24 @@ func main() {
 	if len(os.Args) > 1 {
 		dir = os.Args[1]
 	}
-	var n int
-	filepath.Walk(dir, func(p string, info os.FileInfo, err error) error {
+	fmt.Printf("File Sync Tool\n")
+	fmt.Printf("Scanning %s...\n\n", dir)
+	files := map[string][16]byte{}
+	var names []string
+	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() {
 			return nil
 		}
-		if strings.HasPrefix(info.Name(), ".") {
+		data, err := os.ReadFile(path)
+		if err != nil {
 			return nil
 		}
-		n++
-		fmt.Println(p)
+		sum := md5.Sum(data)
+		files[path] = sum
+		names = append(names, path)
 		return nil
 	})
-	fmt.Printf("%d file(s)\n", n)
+	fmt.Printf("Files indexed: %d\n", len(names))
+	fmt.Printf("Unique hashes: %d\n", len(files))
+	fmt.Printf("\nSync manifest ready.\n")
 }
